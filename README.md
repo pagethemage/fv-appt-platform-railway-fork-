@@ -23,11 +23,11 @@ The FV Referees department would like to provide a better experience for referee
     npm start
     ```
 
-4. Open `http://localhost:3000` to view it in the browser.
+4. Open `http://localhost:3000` to view it in the browser. Keep the terminal open.
 
 ## Build back-end
 
-1. From the root directory, navigate to the `backend` directory:
+1. In a separate terminal from the project's root directory, navigate to the `backend` directory:
 
     ```bash
     cd backend
@@ -36,7 +36,7 @@ The FV Referees department would like to provide a better experience for referee
 2. Create a virtual environment:
 
     ```bash
-    python -m venv venv
+    python3 -m venv venv
     ```
 
 3. Activate the virtual environment:
@@ -61,22 +61,22 @@ The FV Referees department would like to provide a better experience for referee
 5. Set up your database:
 
     ```bash
-    python manage.py migrate
+    python3 manage.py migrate
     ```
 
 6. Create a superuser for admin access (optional):
 
     ```bash
-    python manage.py createsuperuser
+    python3 manage.py createsuperuser
     ```
 
 7. Run the development server:
 
     ```bash
-    python manage.py runserver
+    python3 manage.py runserver
     ```
 
-The API will be available at `http://localhost:8000`.
+The API will be available at `http://localhost:8000`. 
 
 ### Available Scripts
 
