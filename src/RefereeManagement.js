@@ -1,177 +1,223 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Calendar } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import Dashboard from "./Dashboard";
+import Calendar from "./Calendar";
+import Teams from "./Teams";
+import Profile from "./Profile";
+import Settings from "./Settings";
+import LoginPage from "./LoginPage";
 
 const RefereeManagement = () => {
     const [activeTab, setActiveTab] = useState("dashboard");
-    const [appointments, setAppointments] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [currentDate, setCurrentDate] = useState(new Date());
+    // yyyy-mm-dd
+    const [availableDates, setAvailableDates] = useState([
+        "2024-09-07",
+        "2024-09-14",
+        "2024-09-28",
+    ]);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
 
-    useEffect(() => {
-        const fetchAppointments = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:8000/api/appointments/",
-                );
-                setAppointments(response.data);
-            } catch (error) {
-                console.error("Error fetching appointments:", error);
-            }
-        };
-
-        fetchAppointments();
-    }, []);
-
-    const calendarEvents = [
+    // yyyy-mm-dd
+    const appointments = [
         {
             id: 1,
-            title: "Match 1",
-            start: "2024-09-29 @ 10:00",
-            end: "2024-09-29T @ 12:00",
+            competition: "Premier League",
+            type: "Match",
+            date: "2024-07-25",
+            time: "15:00",
+            teams: "Team A vs Team B",
+            venue: "Stadium A",
+            status: "Confirmed",
         },
         {
             id: 2,
-            title: "Training",
-            start: "2024-09-29 @ 14:00",
-            end: "2024-09-29T @ 16:00",
+            competition: "Cup",
+            type: "Final",
+            date: "2024-09-14",
+            time: "18:00",
+            teams: "Team C vs Team D",
+            venue: "Stadium B",
+            status: "Pending",
         },
         {
             id: 3,
-            title: "Match 2",
-            start: "2024-09-29 @ 18:00",
-            end: "2024-09-29 @ 20:00",
+            competition: "League One",
+            type: "Match",
+            date: "2024-09-21",
+            time: "14:00",
+            teams: "Team E vs Team F",
+            venue: "Stadium C",
+            status: "Confirmed",
+        },
+        {
+            id: 4,
+            competition: "Championship",
+            type: "Match",
+            date: "2024-09-28",
+            time: "16:00",
+            teams: "Team G vs Team H",
+            venue: "Stadium D",
+            status: "Confirmed",
+        },
+        {
+            id: 5,
+            competition: "Premier League",
+            type: "Match",
+            date: "2024-10-05",
+            time: "15:00",
+            teams: "Team I vs Team J",
+            venue: "Stadium E",
+            status: "Pending",
         },
     ];
 
+    const teams = [
+        { id: 1, name: "Melbourne City FC", league: "A-League" },
+        { id: 2, name: "Melbourne Victory", league: "A-League" },
+        { id: 3, name: "Manchester United", league: "A-League" },
+    ];
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setShowDropdown(false);
+    };
+
+    const handleLogin = (username) => {
+        setIsLoggedIn(true);
+    };
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case "dashboard":
+                return <Dashboard appointments={appointments} />;
+            case "calendar":
+                return (
+                    <Calendar
+                        currentDate={currentDate}
+                        setCurrentDate={setCurrentDate}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        availableDates={availableDates}
+                        setAvailableDates={setAvailableDates}
+                    />
+                );
+            case "teams":
+                return <Teams teams={teams} />;
+            case "profile":
+                return <Profile />;
+            case "settings":
+                return <Settings />;
+            default:
+                return null;
+        }
+    };
+
+    if (!isLoggedIn) {
+        return <LoginPage onLogin={handleLogin} />;
+    }
+
     return (
-        <div className="bg-gray-100 min-h-screen">
-            <header className="bg-blue-900 text-white p-4">
+        <div className="bg-fvBackground min-h-screen">
+            <header className="bg-fvTopHeader text-white p-2">
                 <div className="container mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Football Victoria</h1>
-                    <span>Logged in as Kyle DENIS</span>
+                    <h1 className="text-s font-bold">
+                        Referee Management Platform
+                    </h1>
                 </div>
             </header>
 
-            <nav className="bg-blue-800 text-white">
-                <div className="container mx-auto">
-                    <ul className="flex">
-                        {[
-                            "Dashboard",
-                            "Calendar",
-                            "Teams",
-                            "Profile",
-                            "Settings",
-                        ].map((item) => (
-                            <li key={item} className="mr-6">
+            <div className="bg-fvMiddleHeader text-white p-4">
+                <div className="container mx-auto flex justify-between items-center">
+                    <div className="flex items-center">
+                        <img
+                            src="/fv-logo-transparent.png"
+                            alt="Football Victoria"
+                            className="h-16"
+                        />
+                    </div>
+                    <div className="relative" ref={dropdownRef}>
+                        <button
+                            className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                            onClick={() => setShowDropdown(!showDropdown)}
+                        >
+                            Logged in as Kyle DENIS
+                        </button>
+                        {showDropdown && (
+                            <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
                                 <button
-                                    className={`py-2 px-4 ${
-                                        activeTab === item.toLowerCase()
-                                            ? "bg-blue-700"
-                                            : ""
-                                    }`}
-                                    onClick={() =>
-                                        setActiveTab(item.toLowerCase())
-                                    }
+                                    className="block px-4 py-2 text-sm capitalize text-gray-700 hover:bg-blue-500 hover:text-white"
+                                    onClick={handleLogout}
                                 >
-                                    {item}
+                                    Logout
                                 </button>
-                            </li>
-                        ))}
-                    </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <nav className="bg-fvBottomHeader text-white">
+                <div className="container mx-auto flex justify-center">
+                    {[
+                        "Dashboard",
+                        "Calendar",
+                        "Teams",
+                        "Profile",
+                        "Settings",
+                    ].map((item) => (
+                        <button
+                            key={item}
+                            className={`py-2 px-4 ${
+                                activeTab === item.toLowerCase()
+                                    ? "underline"
+                                    : ""
+                            }`}
+                            onClick={() => setActiveTab(item.toLowerCase())}
+                        >
+                            {item}
+                        </button>
+                    ))}
                 </div>
             </nav>
 
             <main className="container mx-auto mt-6 grid grid-cols-3 gap-6">
-                <section className="col-span-2">
-                    {activeTab === "dashboard" && (
-                        <div>
-                            <h2 className="text-xl font-semibold mb-4">
-                                Upcoming Appointments
-                            </h2>
-                            <div className="bg-white shadow rounded-lg p-4">
-                                {appointments.map((appointment) => (
-                                    <div
-                                        key={appointment.id}
-                                        className="mb-4 p-2 border rounded"
-                                    >
-                                        <h3 className="font-semibold">
-                                            {appointment.type}
-                                        </h3>
-                                        <p>Status: {appointment.status}</p>
-                                        <p>
-                                            Date: {appointment.date} Time:{" "}
-                                            {appointment.time}
-                                        </p>
-                                        <p>Venue: {appointment.venue}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {activeTab === "calendar" && (
-                        <div>
-                            <h2 className="text-xl font-semibold mb-4">
-                                Calendar
-                            </h2>
-                            <div className="bg-white shadow rounded-lg p-4">
-                                {calendarEvents.map((event) => (
-                                    <div
-                                        key={event.id}
-                                        className="mb-2 p-2 border rounded"
-                                    >
-                                        <h3 className="font-semibold">
-                                            {event.title}
-                                        </h3>
-                                        <p>Start: {event.start}</p>
-                                        <p>End: {event.end}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </section>
+                <section className="col-span-2">{renderContent()}</section>
                 <aside>
-                    <div className="bg-white shadow rounded-lg p-4">
-                        <h2 className="text-xl font-semibold mb-4">
-                            Availability
-                        </h2>
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-semibold">September 2024</h3>
-                            <div>
-                                <button className="mr-2">&lt;</button>
-                                <button>&gt;</button>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-7 gap-1 text-center">
-                            {["S", "M", "T", "W", "T", "F", "S"].map((day) => (
-                                <div key={day} className="font-semibold">
-                                    {day}
-                                </div>
-                            ))}
-                            {Array.from({ length: 30 }, (_, i) => i + 1).map(
-                                (day) => (
-                                    <div
-                                        key={day}
-                                        className={`p-2 ${
-                                            day === 15
-                                                ? "bg-blue-500 text-white"
-                                                : ""
-                                        } ${
-                                            [3, 10, 17, 24].includes(day)
-                                                ? "bg-gray-200"
-                                                : ""
-                                        }`}
-                                    >
-                                        {day}
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    </div>
+                    <Calendar
+                        currentDate={currentDate}
+                        setCurrentDate={setCurrentDate}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        availableDates={availableDates}
+                        setAvailableDates={setAvailableDates}
+                        isWidget={true}
+                    />
                     <div className="bg-white shadow rounded-lg p-4 mt-6">
                         <h2 className="text-xl font-semibold mb-4">
                             News and Messages
                         </h2>
-                        <p>There are no messages to display.</p>
+                        <p className="text-gray-500">
+                            There are no messages to display.
+                        </p>
                     </div>
                 </aside>
             </main>
