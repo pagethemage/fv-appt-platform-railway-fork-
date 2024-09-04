@@ -23,7 +23,9 @@ The FV Referees department would like to provide a better experience for referee
     npm start
     ```
 
-4. Open `http://localhost:3000` to view it in the browser. Keep the terminal open.
+4. Open `http://localhost:3000` to view the webapp in the browser.
+
+> Keep terminal open to host front-end.
 
 ## Build back-end
 
@@ -76,7 +78,9 @@ The FV Referees department would like to provide a better experience for referee
     python3 manage.py runserver
     ```
 
-The API will be available at `http://localhost:8000`. 
+The backend will be available at `http://localhost:8000`.
+
+> Keep terminal open to host backend.
 
 ### Available Scripts
 
