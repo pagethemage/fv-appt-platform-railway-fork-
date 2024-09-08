@@ -138,6 +138,9 @@ The backend will be available at `http://localhost:8000`.
     python manage.py inspectdb > appointment_management/models.py
     ```
 
+If you encounter the ```ValueError: source code strings cannot contain null bytes```, check the encoding type of the newly generated
+models.py file at the bottom right of VSCode screen: UTF-8 and UTF-16 may be conflicted.
+
 8. Check if database tables can be migrated 
 
     Create a python file (example.py) and type
