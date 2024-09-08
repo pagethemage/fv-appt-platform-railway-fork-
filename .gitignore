@@ -222,6 +222,9 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# Virtual environment
+backend/venv
+
 # PyBuilder
 .pybuilder/
 target/
