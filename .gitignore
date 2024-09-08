@@ -223,7 +223,7 @@ instance/
 docs/_build/
 
 # Virtual environment
-backend/venv
+/backend/venv
 
 # PyBuilder
 .pybuilder/

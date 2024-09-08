@@ -93,10 +93,10 @@ The backend will be available at `http://localhost:8000`.
     pip install mssql-django
     ```
 
-3. Save these packages in requirement.txt (optional)
+3. Save these packages in requirements.txt (optional)
 
     ```
-    pip freeze > requirment.txt
+    pip freeze > requirements.txt
     ```
 
 4. Check if Microsoft ODBC Driver for SQL Server is installed
