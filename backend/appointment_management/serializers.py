@@ -1,25 +1,5 @@
 from rest_framework import serializers
-from .models import Appointment
-from .models import Availability
-from .models import Club
-from .models import Match
-from .models import Notification
-from .models import Preference
-from .models import Referee
-from .models import Relative
-from .models import Venue
-from .models import AppointmentManagementAppointment
-from .models import AuthGroup
-from .models import AuthGroupPermissions
-from .models import AuthPermission
-from .models import AuthUser
-from .models import AuthUserGroups
-from .models import AuthUserUserPermissions
-from .models import DjangoAdminLog
-from .models import DjangoContentType
-from .models import DjangoMigrations
-from .models import DjangoSession
-from .models import Sysdiagrams
+from .models import *
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
