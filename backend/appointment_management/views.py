@@ -2,50 +2,13 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework import authentication
-from .models import Appointment
-from .models import Availability
-from .models import Club
-from .models import Match
-from .models import Notification
-from .models import Preference
-from .models import Referee
-from .models import Relative
-from .models import Venue
-from .models import AppointmentManagementAppointment
-from .models import AuthGroup
-from .models import AuthGroupPermissions
-from .models import AuthPermission
-from .models import AuthUser
-from .models import AuthUserGroups
-from .models import AuthUserUserPermissions
-from .models import DjangoAdminLog
-from .models import DjangoContentType
-from .models import DjangoMigrations
-from .models import DjangoSession
-from .models import Sysdiagrams
-from .serializers import AppointmentSerializer
-from .serializers import AvailabilitySerializer
-from .serializers import ClubSerializer
-from .serializers import MatchSerializer
-from .serializers import NotificationSerializer
-from .serializers import PreferenceSerializer
-from .serializers import RefereeSerializer
-from .serializers import RelativeSerializer
-from .serializers import VenueSerializer
-from .serializers import AppointmentManagementAppointmentSerializer
-from .serializers import AuthGroupSerializer
-from .serializers import AuthGroupPermissionsSerializer
-from .serializers import AuthPermissionSerializer
-from .serializers import AuthUserSerializer
-from .serializers import AuthUserGroupsSerializer
-from .serializers import AuthUserUserPermissionsSerializer
-from .serializers import DjangoAdminLogSerializer
-from .serializers import DjangoContentTypeSerializer
-from .serializers import DjangoMigrationsSerializer
-from .serializers import DjangoSessionSerializer
-from .serializers import SysdiagramsSerializer
+from rest_framework.views import APIView
+from django.conf import settings
+from .models import *
+from .serializers import *
 
 # Create your views here.
+
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
@@ -510,7 +473,7 @@ class AppointmentManagementAppointmentViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         appointment_manage_appointment = get_object_or_404(self.queryset, pk=pk)
         serializer = AppointmentManagementAppointmentSerializer(appointment_manage_appointment, data=request.data, partial=True)
-        if serializer.is_valid()
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
