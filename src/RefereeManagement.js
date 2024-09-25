@@ -5,6 +5,7 @@ import Teams from "./Teams";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import LoginPage from "./LoginPage";
+import TitleWithBar from "./components/TitleWithBar";
 
 const RefereeManagement = () => {
     const [activeTab, setActiveTab] = useState("dashboard");
@@ -18,6 +19,7 @@ const RefereeManagement = () => {
     ]);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
     const dropdownRef = useRef(null);
 
     // yyyy-mm-dd
@@ -96,6 +98,10 @@ const RefereeManagement = () => {
         };
     }, []);
 
+    const handleUpdateAvailability = () => {
+        setShowAvailabilityModal(true);
+    };
+
     const handleLogout = () => {
         setIsLoggedIn(false);
         setShowDropdown(false);
@@ -108,7 +114,12 @@ const RefereeManagement = () => {
     const renderContent = () => {
         switch (activeTab) {
             case "dashboard":
-                return <Dashboard appointments={appointments} />;
+                return (
+                    <Dashboard
+                        appointments={appointments}
+                        handleUpdateAvailability={handleUpdateAvailability}
+                    />
+                );
             case "calendar":
                 return (
                     <Calendar
@@ -118,6 +129,7 @@ const RefereeManagement = () => {
                         setSelectedDate={setSelectedDate}
                         availableDates={availableDates}
                         setAvailableDates={setAvailableDates}
+                        handleUpdateAvailability={handleUpdateAvailability}
                     />
                 );
             case "teams":
@@ -200,8 +212,22 @@ const RefereeManagement = () => {
             </nav>
 
             <main className="container mx-auto mt-6 grid grid-cols-3 gap-6">
+                {/* Main content: Appointments table */}
                 <section className="col-span-2">{renderContent()}</section>
+
+                {/* Sidebar content: Calendar and News */}
                 <aside>
+                    <div className="mb-4">
+                        <TitleWithBar title="Availability" />
+                        <button
+                            onClick={handleUpdateAvailability}
+                            className="bg-fvMiddleHeader hover:underline text-black font-bold py-3 px-4 rounded w-full"
+                        >
+                            Update Availability
+                        </button>
+                    </div>
+
+                    {/* Calendar widget */}
                     <Calendar
                         currentDate={currentDate}
                         setCurrentDate={setCurrentDate}
@@ -211,13 +237,15 @@ const RefereeManagement = () => {
                         setAvailableDates={setAvailableDates}
                         isWidget={true}
                     />
-                    <div className="bg-white shadow rounded-lg p-4 mt-6">
-                        <h2 className="text-xl font-semibold mb-4">
-                            News and Messages
-                        </h2>
-                        <p className="text-gray-500">
-                            There are no messages to display.
-                        </p>
+
+                    {/* News and Messages */}
+                    <div className="mt-6">
+                        <TitleWithBar title="News and Messages" />
+                        <div className="bg-white shadow rounded-lg p-4">
+                            <p className="text-gray-500">
+                                There are no messages to display.
+                            </p>
+                        </div>
                     </div>
                 </aside>
             </main>
