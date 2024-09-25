@@ -102,7 +102,7 @@ const Calendar = ({
                         {day}
                     </span>
                     {isAvailable && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600"></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600 rounded-sm"></div>
                     )}
                 </button>,
             );
@@ -113,16 +113,6 @@ const Calendar = ({
 
     return (
         <div className="bg-white shadow rounded-lg p-4">
-            {!isWidget && (
-                <div className="mb-4">
-                    <button
-                        onClick={handleUpdateAvailability}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                        Update Availability
-                    </button>
-                </div>
-            )}
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-lg">
                     {currentDate.toLocaleString("default", {
@@ -152,9 +142,9 @@ const Calendar = ({
                 )}
                 {renderCalendar()}
             </div>
-            <div className="mt-4 flex items-center">
-                <div className="w-4 h-1 bg-green-600 mr-2"></div>
-                <span className="text-sm text-gray-600">
+            <div className="mt-4 flex items-center justify-center">
+                <div className="w-8 h-4 bg-green-600 mr-2 rounded-md"></div>
+                <span className="text-md text-gray-600">
                     Dates you are available
                 </span>
             </div>
