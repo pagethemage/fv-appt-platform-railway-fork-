@@ -109,7 +109,9 @@ class Referee(models.Model):
     level_2:int = "2"
     level_3:int = "3"
     level_4:int = "4"
+    trainee:str = "trainee"
     qual_levels = [
+        (trainee, "Trainee")
         (level_1, "Level 1"),
         (level_2, "Level 2"),
         (level_3, "Level 3"),
