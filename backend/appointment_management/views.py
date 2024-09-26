@@ -23,7 +23,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         ## appointment_date field is before today (signifying the appointment is over)
         ## This code is executed when list() is called. 
 
-        ## May implement on 
+        ## May implement this on matches if we decide it needs it. 
         appointments = queryset
         for appointment in appointments:
             if appointment.appointment_date < date.today() and appointment.status != "cancelled":
