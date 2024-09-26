@@ -86,7 +86,7 @@ DATABASES = {
         'HOST': 'afl-victoria-sql.database.windows.net',
         'PORT': '1433',
         'OPTIONS': {
-                'driver': 'ODBC Driver 17 for SQL Server',
+            'driver': 'ODBC Driver 17 for SQL Server',
         },
     },
 }
@@ -94,7 +94,7 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/4.2/ref/settings/auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -122,6 +122,8 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+
+
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -142,3 +144,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True  # For development only
+
+#API for map
+GOOGLE_API_KEY = 'AIzaSyCjanLMnwAL_fC1u0atPH8zPIp6GGtQB6E'

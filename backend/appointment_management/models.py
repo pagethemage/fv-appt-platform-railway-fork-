@@ -81,18 +81,33 @@ class Preference(models.Model):
 
 
 class Referee(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+    LEVEL_CHOICES = [
+        ('0', 'Trainee'),
+        ('1', 'Level 1'),
+        ('2', 'Level 2'),
+        ('3', 'Level 3'),
+        ('4', 'Level 4'),
+    ]
     referee_id = models.CharField(primary_key=True, max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='0')
+    date_of_birth = models.DateField(null=True)
     age = models.IntegerField()
     location = models.CharField(max_length=50)
+    zip_code = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50)
     experience_years = models.IntegerField()
-    level = models.CharField(max_length=50)
+    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default='0')
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Referee'
 
 
