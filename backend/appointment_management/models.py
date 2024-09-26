@@ -105,10 +105,10 @@ class Referee(models.Model):
     phone_number = models.CharField(max_length=50)
     experience_years = models.IntegerField()
 
-    level_1:int = "1"
-    level_2:int = "2"
-    level_3:int = "3"
-    level_4:int = "4"
+    level_1:str = "1"
+    level_2:str = "2"
+    level_3:str = "3"
+    level_4:str = "4"
     trainee:str = "trainee"
     qual_levels = [
         (trainee, "Trainee")
