@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework import authentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from django.conf import settings
 from .models import *
@@ -297,6 +298,7 @@ class PreferenceViewSet(viewsets.ModelViewSet):
 class RefereeViewSet(viewsets.ModelViewSet):
     queryset = Referee.objects.all()
     serializer_class = RefereeSerializer
+    permission_classes = [IsAuthenticated]
     
     #List all the referees (GET /referees/)
     def list(self, request):
@@ -312,6 +314,10 @@ class RefereeViewSet(viewsets.ModelViewSet):
     
     #Create a new referee (POST /referees/)
     def create(self, request):
+        #Ensure that each referee can only create one profile
+        if Referee.objects.filter(referee_id=request.user.id).exists():
+            return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = RefereeSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()

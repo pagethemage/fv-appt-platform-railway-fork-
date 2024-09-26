@@ -1,34 +1,49 @@
-import React from "react";
-import { User } from "lucide-react";
+import React, { useEffect, useState } from 'react';
 
-const Profile = () => {
+const Referee = () => {
+    const [referees, setReferees] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchReferees = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/api/referee/'); // Adjust the URL as necessary
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setReferees(data);
+            } catch (err) {
+                setError('Failed to fetch referees: ' + err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReferees();
+    }, []);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+
     return (
-        <>
-            <h2 className="text-xl font-semibold mb-4">Profile</h2>
-            <div className="bg-white shadow rounded-lg p-4">
-                <div className="flex items-center mb-4">
-                    <User size={64} className="mr-4" />
-                    <div>
-                        <h3 className="font-semibold text-lg">Kyle DENIS</h3>
-                        <p>Person ID: 12345678</p>
-                        <p>FFA Number: 12345678</p>
-                    </div>
-                </div>
-                <div className="mb-4">
-                    <h4 className="font-semibold">Contact Information</h4>
-                    <p>Email: contact@kyleden.is</p>
-                    <p>Phone: (+61) 418 123 456</p>
-                </div>
-                <div>
-                    <h4 className="font-semibold">Qualifications</h4>
-                    <ul className="list-disc list-inside">
-                        <li>FIFA Referee</li>
-                        <li>First Aid Certified</li>
-                    </ul>
-                </div>
-            </div>
-        </>
+        <div>
+            <h1>Referees</h1>
+            <ul>
+                {referees.map(referee => (
+                    <li key={referee.referee_id}>
+                        <strong>{referee.full_name}</strong><br />
+                        Gender: {referee.gender}<br />
+                        Experience: {referee.experience_years} years<br />
+                        Level: {referee.level}<br />
+                        Email: {referee.email}<br />
+                        Phone: {referee.phone_number}
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 };
 
-export default Profile;
+export default Referee;
