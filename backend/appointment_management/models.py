@@ -36,12 +36,6 @@ class Appointment(models.Model):
         db_table = 'Appointment'
 
 
-
-    class Meta:
-        managed = False
-        db_table = 'Appointment'
-
-
 class Availability(models.Model):
     referee = models.OneToOneField('Referee', models.DO_NOTHING, primary_key=True)  # The composite primary key (referee_id, Date, start_time) found, that is not supported. The first column is selected.
     date = models.DateField(db_column='Date')  # Field name made lowercase.
