@@ -7,15 +7,13 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
 class Appointment(models.Model):
     appointment_id = models.CharField(primary_key=True, max_length=50)
     referee = models.ForeignKey('Referee', models.DO_NOTHING)
     venue = models.ForeignKey('Venue', models.DO_NOTHING)
-    match = models.ForeignKey('Match', models.DO_NOTHING)
+    match = models.ForeignKey('Match', models.DO_NOTHING, null=True)
     distance = models.FloatField()
     appointment_date = models.DateField()
-    status = models.CharField(max_length=50)
     upcoming:str = "upcoming"
     ongoing:str = "ongoing"
     complete:str = "complete"
@@ -30,6 +28,7 @@ class Appointment(models.Model):
     status:int = models.CharField(max_length = 10,
         choices=game_status,
         default=ongoing) 
+    
 
     class Meta:
         managed = True
@@ -66,7 +65,7 @@ class Club(models.Model):
     contact_phone_number = models.CharField(max_length=50)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Club'
 
 
@@ -77,10 +76,10 @@ class Match(models.Model):
     away_club = models.ForeignKey(Club, models.DO_NOTHING, related_name='match_away_club_set')
     venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
     match_date = models.DateField()
-    level = models.CharField(max_length=50)
+    level = models.CharField(max_length=50) ##Implement structures so age group can be designated
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Match'
 
 
@@ -92,16 +91,16 @@ class Notification(models.Model):
     date = models.DateField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Notification'
 
 
 class Preference(models.Model):
-    referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID', primary_key=True)  # Field name made lowercase.
     venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Preference'
 
 
@@ -137,14 +136,14 @@ class Referee(models.Model):
 
 
 class Relative(models.Model):
-    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID', primary_key=True)  # Field name made lowercase.
     club = models.ForeignKey(Club, models.DO_NOTHING, db_column='club_ID')  # Field name made lowercase.
     relative_name = models.CharField(max_length=50)
     relationship = models.CharField(max_length=50)
     age = models.IntegerField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Relative'
 
 
@@ -155,7 +154,7 @@ class Venue(models.Model):
     location = models.CharField(max_length=50)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'Venue'
 
 
