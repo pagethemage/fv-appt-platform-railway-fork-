@@ -4,104 +4,101 @@ from .models import *
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ['appointment_id', 'referee', 'venue', 'match', 'distance', 'appointment_date', 'status']
-
+        fields = "__all__"
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
-        fields = ['referee', 'date', 'start_time', 'duration']
+        fields = "__all__"
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
-        fields = ['club_id', 'club_name', 'home_venue', 'contact_name','contact_phone_number']
-
+        fields = "__all__"
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ['match_id', 'referee', 'home_club', 'away_club', 'venue', 'match_data', 'level']
+        fields = "__all__"
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ['notification_id', 'referee', 'match', 'notification_type', 'date']
+        fields = "__all__"
 
 class PreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Preference
-        fields = ['referee', 'venue']
+        fields = "__all__"
 
 class RefereeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referee
-        fields = ['referee_id', 'first_name', 'last_name', 'age', 'location', 'email', 'phone_number', 'experience_years', 'level']
-
+        fields = "__all__"
 class RelativeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relative
-        fields = ['referee', 'club', 'relative_name', 'relationship', 'age']
+        fields = "__all__"
 
 class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
-        fields = ['venue_id', 'venue_name', 'capacity', 'location']
+        fields = "__all__"
 
 class AppointmentManagementAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppointmentManagementAppointment
-        fields = ['id', 'type', 'status', 'date', 'time', 'venue']
+        fields = "__all__"
 
 class AuthGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthGroup
-        fields = ['name']
+        fields = "__all__"
 
 class AuthGroupPermissionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthGroupPermissions
-        fields = ['id', 'group', 'permission']
+        fields = "__all__"
 
 class AuthPermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthPermission
-        fields = ['name', 'content_type', 'codename']
+        fields = "__all__"
 
 class AuthUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthUser
-        fields = ['password', 'last_login', 'is_superuser', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined']
+        fields = "__all__"
 
 class AuthUserGroupsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthUserGroups
-        fields = ['id', 'user', 'group']
+        fields = "__all__"
 
 class AuthUserUserPermissionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthUserUserPermissions
-        fields = ['id', 'user', 'permission']
+        fields = "__all__"
 
 class DjangoAdminLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = DjangoAdminLog
-        fields = ['action_time', 'object_id', 'object_repr', 'action_flag', 'change_message', 'content_type', 'user']
+        fields = "__all__"
 
 class DjangoContentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DjangoContentType
-        fields = ['app_label', 'model']
+        fields = "__all__"
 
 class DjangoMigrationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DjangoMigrations
-        fields = ['id', 'app', 'name', 'applied']
+        fields = "__all__"
 
 class DjangoSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DjangoSession
-        fields = ['session_key', 'session_data', 'expire_date']
+        fields = "__all__"
 
 class SysdiagramsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sysdiagrams
-        fields = ['name', 'principal_id', 'diagram_id', 'version', 'definition']
+        fields = "__all__"

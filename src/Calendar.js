@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Calendar = ({
@@ -7,16 +7,10 @@ const Calendar = ({
     selectedDate,
     setSelectedDate,
     availableDates,
-    setAvailableDates,
+    unavailableDates,
     isWidget = false,
+    handleUpdateAvailability,
 }) => {
-    const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
-    const [selectedAvailability, setSelectedAvailability] = useState({
-        type: "specific",
-        date: null,
-        dayOfWeek: null,
-    });
-
     const changeMonth = (increment) => {
         setCurrentDate((prevDate) => {
             const newDate = new Date(prevDate);
@@ -32,25 +26,6 @@ const Calendar = ({
             day,
         );
         setSelectedDate(clickedDate.toISOString().split("T")[0]);
-    };
-
-    const handleUpdateAvailability = () => {
-        setShowAvailabilityModal(true);
-    };
-
-    const handleAvailabilitySubmit = () => {
-        if (
-            selectedAvailability.type === "specific" &&
-            selectedAvailability.date
-        ) {
-            setAvailableDates((prev) => [...prev, selectedAvailability.date]);
-        } else if (
-            selectedAvailability.type === "recurring" &&
-            selectedAvailability.dayOfWeek !== null
-        ) {
-            // Implement recurring availability logic here
-        }
-        setShowAvailabilityModal(false);
     };
 
     const renderCalendar = () => {
@@ -80,7 +55,8 @@ const Calendar = ({
             const dateString = date.toISOString().split("T")[0];
             const isSelected = selectedDate === dateString;
             const isToday = date.toDateString() === today.toDateString();
-            const isAvailable = availableDates.includes(dateString);
+            const isAvailable = availableDates && availableDates.includes(dateString);
+            const isUnavailable = unavailableDates && unavailableDates.includes(dateString);
 
             days.push(
                 <button
@@ -102,7 +78,10 @@ const Calendar = ({
                         {day}
                     </span>
                     {isAvailable && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600"></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600 rounded-sm"></div>
+                    )}
+                    {isUnavailable && (
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-600 rounded-sm"></div>
                     )}
                 </button>,
             );
@@ -113,16 +92,6 @@ const Calendar = ({
 
     return (
         <div className="bg-white shadow rounded-lg p-4">
-            {!isWidget && (
-                <div className="mb-4">
-                    <button
-                        onClick={handleUpdateAvailability}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                        Update Availability
-                    </button>
-                </div>
-            )}
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-lg">
                     {currentDate.toLocaleString("default", {
@@ -152,109 +121,19 @@ const Calendar = ({
                 )}
                 {renderCalendar()}
             </div>
-            <div className="mt-4 flex items-center">
-                <div className="w-4 h-1 bg-green-600 mr-2"></div>
-                <span className="text-sm text-gray-600">
-                    Dates you are available
-                </span>
+            <div className="mt-4 flex items-center justify-center">
+                <div className="w-8 h-4 bg-green-600 mr-2 rounded-md"></div>
+                <span className="text-md text-gray-600 mr-4">Available</span>
+                <div className="w-8 h-4 bg-red-600 mr-2 rounded-md"></div>
+                <span className="text-md text-gray-600">Unavailable</span>
             </div>
-            {showAvailabilityModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg">
-                        <h3 className="text-lg font-semibold mb-4">
-                            Update Availability
-                        </h3>
-                        <div className="mb-4">
-                            <label className="block mb-2">
-                                <input
-                                    type="radio"
-                                    name="availabilityType"
-                                    value="specific"
-                                    checked={
-                                        selectedAvailability.type === "specific"
-                                    }
-                                    onChange={() =>
-                                        setSelectedAvailability({
-                                            type: "specific",
-                                            date: null,
-                                            dayOfWeek: null,
-                                        })
-                                    }
-                                    className="mr-2"
-                                />
-                                Specific Date
-                            </label>
-                            {selectedAvailability.type === "specific" && (
-                                <input
-                                    type="date"
-                                    onChange={(e) =>
-                                        setSelectedAvailability({
-                                            ...selectedAvailability,
-                                            date: e.target.value,
-                                        })
-                                    }
-                                    className="border p-2 rounded"
-                                />
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block mb-2">
-                                <input
-                                    type="radio"
-                                    name="availabilityType"
-                                    value="recurring"
-                                    checked={
-                                        selectedAvailability.type ===
-                                        "recurring"
-                                    }
-                                    onChange={() =>
-                                        setSelectedAvailability({
-                                            type: "recurring",
-                                            date: null,
-                                            dayOfWeek: null,
-                                        })
-                                    }
-                                    className="mr-2"
-                                />
-                                Recurring Day
-                            </label>
-                            {selectedAvailability.type === "recurring" && (
-                                <select
-                                    onChange={(e) =>
-                                        setSelectedAvailability({
-                                            ...selectedAvailability,
-                                            dayOfWeek: e.target.value,
-                                        })
-                                    }
-                                    className="border p-2 rounded"
-                                >
-                                    <option value="">Select a day</option>
-                                    <option value="0">Sunday</option>
-                                    <option value="1">Monday</option>
-                                    <option value="2">Tuesday</option>
-                                    <option value="3">Wednesday</option>
-                                    <option value="4">Thursday</option>
-                                    <option value="5">Friday</option>
-                                    <option value="6">Saturday</option>
-                                </select>
-                            )}
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => setShowAvailabilityModal(false)}
-                                className="mr-2 px-4 py-2 border rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleAvailabilitySubmit}
-                                className="px-4 py-2 bg-blue-500 text-white rounded"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {!isWidget && (
+                <button
+                    onClick={handleUpdateAvailability}
+                    className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded"
+                >
+                    Update Availability
+                </button>
             )}
         </div>
     );
