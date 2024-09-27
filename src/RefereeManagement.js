@@ -5,6 +5,7 @@ import Calendar from "./Calendar";
 import Teams from "./Teams";
 import Profile from "./Profile";
 import Settings from "./Settings";
+import Venue from "./Venue";  // Import Venue component
 import LoginPage from "./LoginPage";
 import TitleWithBar from "./components/TitleWithBar";
 import TimePicker from "./components/TimePicker";
@@ -31,7 +32,6 @@ const RefereeManagement = () => {
     const dropdownRef = useRef(null);
     const modalRef = useRef(null);
 
-    // yyyy-mm-dd
     const appointments = [
         {
             id: 1,
@@ -337,6 +337,8 @@ const RefereeManagement = () => {
                 return <Profile />;
             case "settings":
                 return <Settings />;
+            case "venues":  // Add venue tab
+                return <Venue />;
             default:
                 return null;
         }
@@ -392,6 +394,7 @@ const RefereeManagement = () => {
                         "Dashboard",
                         "Calendar",
                         "Teams",
+                        "Venues",   // Add Venues to the navigation
                         "Profile",
                         "Settings",
                     ].map((item) => (
@@ -411,7 +414,10 @@ const RefereeManagement = () => {
             </nav>
 
             <main className="container mx-auto mt-6 grid grid-cols-3 gap-6">
+                {/* Main content: Appointments table */}
                 <section className="col-span-2">{renderContent()}</section>
+
+                {/* Sidebar content: Calendar and News */}
                 <aside>
                     <div className="mb-4">
                         <TitleWithBar title="Availability" />
@@ -422,6 +428,8 @@ const RefereeManagement = () => {
                             Update Availability
                         </button>
                     </div>
+
+                    {/* Calendar widget */}
                     <Calendar
                         currentDate={currentDate}
                         setCurrentDate={setCurrentDate}
@@ -432,6 +440,8 @@ const RefereeManagement = () => {
                         isWidget={true}
                         handleUpdateAvailability={handleUpdateAvailability}
                     />
+
+                    {/* News and Messages */}
                     <div className="mt-6">
                         <TitleWithBar title="News and Messages" />
                         <div className="bg-white shadow rounded-lg p-4">
