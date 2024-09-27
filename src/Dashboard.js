@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import TitleWithBar from "./components/TitleWithBar";
+import MatchDetails from "./MatchDetails";
 
 const Dashboard = ({ appointments, handleUpdateAvailability }) => {
+    const [selectedMatch, setSelectedMatch] = useState(null);
+
+    const getStatusColor = (status) => {
+        switch (status.toLowerCase()) {
+            case "confirmed":
+                return "bg-green-500 text-white";
+            case "pending":
+                return "bg-red-500 text-white";
+            default:
+                return "bg-gray-500 text-white";
+        }
+    };
+
     return (
         <div>
             <TitleWithBar title="Upcoming Appointments" />
@@ -55,11 +69,22 @@ const Dashboard = ({ appointments, handleUpdateAvailability }) => {
                             <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
                                 {appointment.venue}
                             </td>
-                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
-                                {appointment.status}
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200">
+                                <span
+                                    className={`px-3 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                                        appointment.status,
+                                    )}`}
+                                >
+                                    {appointment.status}
+                                </span>
                             </td>
                             <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200">
-                                <button className="text-blue-600 hover:text-blue-900">
+                                <button
+                                    className="text-blue-600 hover:text-blue-900"
+                                    onClick={() =>
+                                        setSelectedMatch(appointment)
+                                    }
+                                >
                                     View
                                 </button>
                             </td>
@@ -67,6 +92,12 @@ const Dashboard = ({ appointments, handleUpdateAvailability }) => {
                     ))}
                 </tbody>
             </table>
+            {selectedMatch && (
+                <MatchDetails
+                    match={selectedMatch}
+                    onClose={() => setSelectedMatch(null)}
+                />
+            )}
         </div>
     );
 };
