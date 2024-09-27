@@ -22,10 +22,20 @@ class Appointment(models.Model):
 
 
 class Availability(models.Model):
+    main_days = [
+        ("Mon", "Monday"),
+        ("Tue", "Tuesday"),
+        ("Wed", "Wednesday"),
+        ("Thu", "Thursday"),
+        ("Fri", "Friday"),
+        ("Sat", "Saturday"),
+        ("Sun", "Sunday")
+    ]
     referee = models.OneToOneField('Referee', models.DO_NOTHING, primary_key=True)  # The composite primary key (referee_id, Date, start_time) found, that is not supported. The first column is selected.
-    date = models.DateField(db_column='Date')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', null=True)  # Field name made lowercase. Date field represents specific availability: 05/24/2024 5pm - 8pm.
     start_time = models.TimeField()
     duration = models.IntegerField(db_column='Duration')  # Field name made lowercase.
+    weekday = models.CharField(max_length=3, choices=main_days, null=True) # Weekday field represents general availability: Sunday 5pm - 8pm.
 
     class Meta:
         managed = False
