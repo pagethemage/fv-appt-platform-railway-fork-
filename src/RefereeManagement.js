@@ -5,9 +5,11 @@ import Teams from "./Teams";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import LoginPage from "./LoginPage";
+import axios from "axios"
 
 const RefereeManagement = () => {
     const [activeTab, setActiveTab] = useState("dashboard");
+    const [appointment, setAppointments] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [currentDate, setCurrentDate] = useState(new Date());
     // yyyy-mm-dd
@@ -20,60 +22,17 @@ const RefereeManagement = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
-    // yyyy-mm-dd
-    const appointments = [
-        {
-            id: 1,
-            competition: "Premier League",
-            type: "Match",
-            date: "2024-07-25",
-            time: "15:00",
-            teams: "Team A vs Team B",
-            venue: "Stadium A",
-            status: "Confirmed",
-        },
-        {
-            id: 2,
-            competition: "Cup",
-            type: "Final",
-            date: "2024-09-14",
-            time: "18:00",
-            teams: "Team C vs Team D",
-            venue: "Stadium B",
-            status: "Pending",
-        },
-        {
-            id: 3,
-            competition: "League One",
-            type: "Match",
-            date: "2024-09-21",
-            time: "14:00",
-            teams: "Team E vs Team F",
-            venue: "Stadium C",
-            status: "Confirmed",
-        },
-        {
-            id: 4,
-            competition: "Championship",
-            type: "Match",
-            date: "2024-09-28",
-            time: "16:00",
-            teams: "Team G vs Team H",
-            venue: "Stadium D",
-            status: "Confirmed",
-        },
-        {
-            id: 5,
-            competition: "Premier League",
-            type: "Match",
-            date: "2024-10-05",
-            time: "15:00",
-            teams: "Team I vs Team J",
-            venue: "Stadium E",
-            status: "Pending",
-        },
-    ];
-
+    useEffect(() => {
+        getAppointments();
+    }, [])
+    
+    const getAppointments = async () => {
+        const response = await axios.get("http://localhost:8000/api/appointments/")
+        if (response.status == 200) {
+            setAppointments(response.data)
+        }
+    }
+    
     const teams = [
         { id: 1, name: "Melbourne City FC", league: "A-League" },
         { id: 2, name: "Melbourne Victory", league: "A-League" },
@@ -108,7 +67,7 @@ const RefereeManagement = () => {
     const renderContent = () => {
         switch (activeTab) {
             case "dashboard":
-                return <Dashboard appointments={appointments} />;
+                return <Dashboard appointments={appointment} />;
             case "calendar":
                 return (
                     <Calendar

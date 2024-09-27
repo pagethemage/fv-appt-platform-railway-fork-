@@ -30,31 +30,25 @@ const Dashboard = ({ appointments }) => {
                         <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                             Status
                         </th>
-                        <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {appointments.map((appointment) => (
-                        <tr key={appointment.id}>
+                        <tr key={appointment.appointment_id}>
                             <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                {appointment.competition}
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                {appointment.type}
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                {appointment.date}
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                {appointment.time}
-                            </td>
-                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                {appointment.teams}
+                                {appointment.referee}
                             </td>
                             <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                 {appointment.venue}
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                {appointment.match}
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                {appointment.distance}
+                            </td>
+                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                {appointment.appointment_date}
                             </td>
                             <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                 {appointment.status}
