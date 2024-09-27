@@ -119,7 +119,7 @@ class Referee(models.Model):
     ]
     
     level = models.CharField(
-        max_length=1,
+        max_length=10,
         choices=qual_levels,
         default=level_1,
     )
