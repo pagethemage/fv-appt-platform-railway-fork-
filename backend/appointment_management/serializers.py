@@ -5,11 +5,17 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = "__all__"
+
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
         fields = "__all__"
 
+class RefereeAvailabilitySerializer(serializers.ModelSerializer):
+    availability = AvailabilitySerializer()
+    class Meta:
+        model = Referee
+        fields = "__all__"
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
