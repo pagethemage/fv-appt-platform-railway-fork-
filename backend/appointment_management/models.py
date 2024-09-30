@@ -15,6 +15,7 @@ class Appointment(models.Model):
     match = models.ForeignKey('Match', models.DO_NOTHING)
     distance = models.FloatField()
     appointment_date = models.DateField()
+    appointment_time = models.TimeField(null=True)
     status = models.CharField(max_length=50)
     upcoming:str = "upcoming"
     ongoing:str = "ongoing"
@@ -78,6 +79,7 @@ class Match(models.Model):
     venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
     match_date = models.DateField()
     level = models.CharField(max_length=50)
+    match_time = models.TimeField(null=True)
 
     class Meta:
         managed = True
