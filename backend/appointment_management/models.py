@@ -15,7 +15,27 @@ class Appointment(models.Model):
     match = models.ForeignKey('Match', models.DO_NOTHING)
     distance = models.FloatField()
     appointment_date = models.DateField()
-    status = models.CharField(max_length=50)
+    upcoming:str = "upcoming"
+    ongoing:str = "ongoing"
+    complete:str = "complete"
+    cancelled:str = "cancelled"
+    game_status = [
+        (upcoming, "Upcoming"),
+        (ongoing, "Ongoing"),
+        (complete, "Complete"),
+        (cancelled, "Cancelled"),
+    ]
+
+    status:int = models.CharField(max_length = 10,
+        choices=game_status,
+        default=ongoing) 
+    
+
+    class Meta:
+        managed = False
+        db_table = 'Appointment'
+
+
 
     class Meta:
         managed = False
@@ -53,7 +73,7 @@ class Match(models.Model):
     away_club = models.ForeignKey(Club, models.DO_NOTHING, related_name='match_away_club_set')
     venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
     match_date = models.DateField()
-    level = models.CharField(max_length=50)
+    level = models.CharField(max_length=50) ##Implement structures so age group can be designated
 
     class Meta:
         managed = False
@@ -103,7 +123,8 @@ class Referee(models.Model):
     email = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50)
     experience_years = models.IntegerField()
-    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default='0')
+
+   
 
     class Meta:
         managed = False
