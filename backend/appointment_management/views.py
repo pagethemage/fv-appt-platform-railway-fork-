@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
@@ -24,7 +25,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         ## appointment_date field is before today (signifying the appointment is over)
         ## This code is executed when list() is called. 
 
-        ## May implement on 
+        ## May implement this on matches if we decide it needs it. 
         appointments = queryset
         for appointment in appointments:
             if appointment.appointment_date < date.today() and appointment.status != "cancelled":
@@ -191,6 +192,16 @@ class MatchViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         match = get_object_or_404(self.queryset, pk=pk)
         serializer = MatchSerializer(match)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    #Retrieve qualified referees for a specific match (GET matches/qualified_referees/{id})
+    @action(detail=True)
+    def qualified_referees(self, request, pk=None):
+        match = get_object_or_404(self.queryset, pk=pk)
+        referee_availability_queryset = Referee.objects.prefetch_related('availability')
+        level_qualified_set = referee_availability_queryset.filter(level__gte=match.level)
+        final_availability_set = level_qualified_set.filter(availability__date=match.match_date)
+        serializer = RefereeAvailabilitySerializer(final_availability_set, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     #Create a new match (POST /matches/)
