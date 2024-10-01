@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Dashboard from "./Dashboard";
 import Calendar from "./Calendar";
 import Teams from "./Teams";
@@ -6,19 +7,31 @@ import Profile from "./Profile";
 import Settings from "./Settings";
 import Venue from "./Venue";  // Import Venue component
 import LoginPage from "./LoginPage";
+import TitleWithBar from "./components/TitleWithBar";
+import TimePicker from "./components/TimePicker";
 
 const RefereeManagement = () => {
     const [activeTab, setActiveTab] = useState("dashboard");
+    const [appointment, setAppointments] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [availableDates, setAvailableDates] = useState([
-        "2024-09-07",
-        "2024-09-14",
-        "2024-09-28",
-    ]);
+    const [availableDates, setAvailableDates] = useState([]);
+    const [unavailableDates, setUnavailableDates] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
+    const [availabilityType, setAvailabilityType] = useState(null);
+    const [availabilityData, setAvailabilityData] = useState({
+        date: null,
+        day: null,
+        timeType: "entireDay",
+        startTime: "09:00",
+        endTime: "17:00",
+        type: "available",
+        organizations: "all",
+    });
     const dropdownRef = useRef(null);
+    const modalRef = useRef(null);
 
     const appointments = [
         {
@@ -79,6 +92,15 @@ const RefereeManagement = () => {
         { id: 3, name: "Manchester United", league: "A-League" },
     ];
 
+    const handleLogin = (username) => {
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setShowDropdown(false);
+    };
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -86,6 +108,10 @@ const RefereeManagement = () => {
                 !dropdownRef.current.contains(event.target)
             ) {
                 setShowDropdown(false);
+            }
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setShowAvailabilityModal(false);
+                setAvailabilityType(null);
             }
         };
 
@@ -95,19 +121,205 @@ const RefereeManagement = () => {
         };
     }, []);
 
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-        setShowDropdown(false);
+    const handleUpdateAvailability = () => {
+        setShowAvailabilityModal(true);
     };
 
-    const handleLogin = (username) => {
-        setIsLoggedIn(true);
+    const handleAvailabilityTypeSelect = (type) => {
+        setAvailabilityType(type);
+    };
+
+    const handleAvailabilitySubmit = () => {
+        if (availabilityType === "specific" && availabilityData.date) {
+            const dateString = availabilityData.date;
+
+            if (availabilityData.type === "available") {
+                setAvailableDates((prev) => [...prev, dateString]);
+                setUnavailableDates((prev) =>
+                    prev.filter((date) => date !== dateString),
+                );
+            } else {
+                setUnavailableDates((prev) => [...prev, dateString]);
+                setAvailableDates((prev) =>
+                    prev.filter((date) => date !== dateString),
+                );
+            }
+        } else if (availabilityType === "general") {
+            // TODO: Implement general availability logic
+            console.log("General availability updated:", availabilityData);
+        }
+        setShowAvailabilityModal(false);
+        setAvailabilityType(null);
+        // Reset availabilityData
+        setAvailabilityData({
+            date: null,
+            day: null,
+            timeType: "entireDay",
+            startTime: "09:00",
+            endTime: "17:00",
+            type: "available",
+            organizations: "all",
+        });
+    };
+
+    const renderAvailabilityForm = () => {
+        return (
+            <div>
+                <h4 className="font-semibold mb-2">
+                    {availabilityType === "general"
+                        ? "Add General Availability"
+                        : "Add Specific Availability"}
+                </h4>
+                {availabilityType === "specific" ? (
+                    <div className="mb-4">
+                        <label className="block mb-1">
+                            Date you are specifically available
+                        </label>
+                        <input
+                            type="date"
+                            className="w-full p-2 border rounded"
+                            value={availabilityData.date || ""}
+                            onChange={(e) =>
+                                setAvailabilityData({
+                                    ...availabilityData,
+                                    date: e.target.value,
+                                })
+                            }
+                        />
+                    </div>
+                ) : (
+                    <div className="mb-4">
+                        <label className="block mb-1">
+                            Day you are generally available
+                        </label>
+                        <select
+                            className="w-full p-2 border rounded"
+                            value={availabilityData.day || ""}
+                            onChange={(e) =>
+                                setAvailabilityData({
+                                    ...availabilityData,
+                                    day: e.target.value,
+                                })
+                            }
+                        >
+                            <option value="">Select a day</option>
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                            <option value="saturday">Saturday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
+                )}
+                <div className="mb-4">
+                    <label className="block mb-1">Time you are available</label>
+                    <select
+                        className="w-full p-2 border rounded mb-2"
+                        value={availabilityData.timeType}
+                        onChange={(e) =>
+                            setAvailabilityData({
+                                ...availabilityData,
+                                timeType: e.target.value,
+                            })
+                        }
+                    >
+                        <option value="entireDay">For the entire day</option>
+                        <option value="from">From</option>
+                        <option value="until">Anytime until</option>
+                    </select>
+                    {availabilityData.timeType !== "entireDay" && (
+                        <TimePicker
+                            value={
+                                availabilityData.timeType === "from"
+                                    ? availabilityData.startTime
+                                    : availabilityData.endTime
+                            }
+                            onChange={(time) =>
+                                setAvailabilityData({
+                                    ...availabilityData,
+                                    [availabilityData.timeType === "from"
+                                        ? "startTime"
+                                        : "endTime"]: time,
+                                })
+                            }
+                        />
+                    )}
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-1">Type of availability</label>
+                    <select
+                        className="w-full p-2 border rounded"
+                        value={availabilityData.type}
+                        onChange={(e) =>
+                            setAvailabilityData({
+                                ...availabilityData,
+                                type: e.target.value,
+                            })
+                        }
+                    >
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-1">
+                        Where you are available
+                    </label>
+                    <div>
+                        <label className="inline-flex items-center mr-4">
+                            <input
+                                type="radio"
+                                className="form-radio"
+                                name="organizations"
+                                value="all"
+                                checked={
+                                    availabilityData.organizations === "all"
+                                }
+                                onChange={(e) =>
+                                    setAvailabilityData({
+                                        ...availabilityData,
+                                        organizations: e.target.value,
+                                    })
+                                }
+                            />
+                            <span className="ml-2">All organisations</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                className="form-radio"
+                                name="organizations"
+                                value="selected"
+                                checked={
+                                    availabilityData.organizations ===
+                                    "selected"
+                                }
+                                onChange={(e) =>
+                                    setAvailabilityData({
+                                        ...availabilityData,
+                                        organizations: e.target.value,
+                                    })
+                                }
+                            />
+                            <span className="ml-2">Selected organisations</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     const renderContent = () => {
         switch (activeTab) {
             case "dashboard":
-                return <Dashboard appointments={appointments} />;
+                return (
+                    <Dashboard
+                        appointments={appointments}
+                        handleUpdateAvailability={handleUpdateAvailability}
+                    />
+                );
             case "calendar":
                 return (
                     <Calendar
@@ -116,11 +328,12 @@ const RefereeManagement = () => {
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                         availableDates={availableDates}
-                        setAvailableDates={setAvailableDates}
+                        unavailableDates={unavailableDates}
+                        handleUpdateAvailability={handleUpdateAvailability}
                     />
                 );
             case "teams":
-                return <Teams teams={teams} />;
+                return <Teams />;
             case "profile":
                 return <Profile />;
             case "settings":
@@ -202,27 +415,106 @@ const RefereeManagement = () => {
             </nav>
 
             <main className="container mx-auto mt-6 grid grid-cols-3 gap-6">
+                {/* Main content: Appointments table */}
                 <section className="col-span-2">{renderContent()}</section>
+
+                {/* Sidebar content: Calendar and News */}
                 <aside>
+                    <div className="mb-4">
+                        <TitleWithBar title="Availability" />
+                        <button
+                            onClick={handleUpdateAvailability}
+                            className="bg-fvMiddleHeader hover:underline text-black font-bold py-3 px-4 rounded w-full"
+                        >
+                            Update Availability
+                        </button>
+                    </div>
+
+                    {/* Calendar widget */}
                     <Calendar
                         currentDate={currentDate}
                         setCurrentDate={setCurrentDate}
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                         availableDates={availableDates}
-                        setAvailableDates={setAvailableDates}
+                        unavailableDates={unavailableDates}
                         isWidget={true}
+                        handleUpdateAvailability={handleUpdateAvailability}
                     />
-                    <div className="bg-white shadow rounded-lg p-4 mt-6">
-                        <h2 className="text-xl font-semibold mb-4">
-                            News and Messages
-                        </h2>
-                        <p className="text-gray-500">
-                            There are no messages to display.
-                        </p>
+
+                    {/* News and Messages */}
+                    <div className="mt-6">
+                        <TitleWithBar title="News and Messages" />
+                        <div className="bg-white shadow rounded-lg p-4">
+                            <p className="text-gray-500">
+                                There are no messages to display.
+                            </p>
+                        </div>
                     </div>
                 </aside>
             </main>
+
+            {showAvailabilityModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div
+                        ref={modalRef}
+                        className="bg-white p-6 rounded-lg w-96 relative"
+                    >
+                        <button
+                            onClick={() => {
+                                setShowAvailabilityModal(false);
+                                setAvailabilityType(null);
+                            }}
+                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                        >
+                            <X size={24} />
+                        </button>
+                        <h3 className="text-lg font-semibold mb-4">
+                            Update Availability
+                        </h3>
+                        {!availabilityType ? (
+                            <div>
+                                <button
+                                    onClick={() =>
+                                        handleAvailabilityTypeSelect("general")
+                                    }
+                                    className="w-full mb-2 px-4 py-2 bg-blue-500 text-white rounded"
+                                >
+                                    Update General Availability
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        handleAvailabilityTypeSelect("specific")
+                                    }
+                                    className="w-full px-4 py-2 bg-blue-500 text-white rounded"
+                                >
+                                    Update Specific Availability
+                                </button>
+                            </div>
+                        ) : (
+                            <div>
+                                {renderAvailabilityForm()}
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={() =>
+                                            setAvailabilityType(null)
+                                        }
+                                        className="mr-2 px-4 py-2 border rounded"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        onClick={handleAvailabilitySubmit}
+                                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

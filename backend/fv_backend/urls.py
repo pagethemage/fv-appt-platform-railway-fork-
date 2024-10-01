@@ -1,5 +1,3 @@
-
-
 from django.contrib import admin
 from django.urls import path, include
 
@@ -24,5 +22,4 @@ router.register(r'appointmentmanageappointment', AppointmentManagementAppointmen
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-
 ]

@@ -16,6 +16,8 @@ class Appointment(models.Model):
     match = models.ForeignKey('Match', models.DO_NOTHING)
     distance = models.FloatField()
     appointment_date = models.DateField()
+    appointment_time = models.TimeField(null=True)
+    status = models.CharField(max_length=50)
     upcoming:str = "upcoming"
     ongoing:str = "ongoing"
     complete:str = "complete"
@@ -30,7 +32,143 @@ class Appointment(models.Model):
     status:int = models.CharField(max_length = 10,
         choices=game_status,
         default=ongoing) 
-    
+
+    class Meta:
+        managed = True
+        db_table = 'Appointment'
+
+
+class Availability(models.Model):
+    main_days = [
+        ("Mon", "Monday"),
+        ("Tue", "Tuesday"),
+        ("Wed", "Wednesday"),
+        ("Thu", "Thursday"),
+        ("Fri", "Friday"),
+        ("Sat", "Saturday"),
+        ("Sun", "Sunday")
+    ]
+    referee = models.OneToOneField('Referee', models.DO_NOTHING, primary_key=True)  # The composite primary key (referee_id, Date, start_time) found, that is not supported. The first column is selected.
+    date = models.DateField(db_column='Date', null=True)  # Field name made lowercase. Date field represents specific availability: 05/24/2024 5pm - 8pm.
+    start_time = models.TimeField()
+    duration = models.IntegerField(db_column='Duration')  # Field name made lowercase.
+    weekday = models.CharField(max_length=3, choices=main_days, null=True) # Weekday field represents general availability: Sunday 5pm - 8pm.
+
+    class Meta:
+        managed = True
+        db_table = 'Availability'
+        unique_together = (('referee', 'date', 'start_time'),)
+
+
+class Club(models.Model):
+    club_id = models.CharField(db_column='club_ID', primary_key=True, max_length=50)  # Field name made lowercase.
+    club_name = models.CharField(max_length=50)
+    home_venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='home_venue_ID')  # Field name made lowercase.
+    contact_name = models.CharField(max_length=50)
+    contact_phone_number = models.CharField(max_length=50)
+
+    class Meta:
+        managed = True
+        db_table = 'Club'
+
+
+class Match(models.Model):
+    match_id = models.CharField(db_column='match_ID', primary_key=True, max_length=50)  # Field name made lowercase.
+    referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    home_club = models.ForeignKey(Club, models.DO_NOTHING)
+    away_club = models.ForeignKey(Club, models.DO_NOTHING, related_name='match_away_club_set')
+    venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
+    match_date = models.DateField()
+    level = models.CharField(max_length=50)
+    match_time = models.TimeField(null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'Match'
+
+
+class Notification(models.Model):
+    notification_id = models.CharField(primary_key=True, max_length=50)
+    referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    match = models.ForeignKey(Match, models.DO_NOTHING, db_column='match_ID')  # Field name made lowercase.
+    notification_type = models.CharField(max_length=6)
+    date = models.DateField()
+
+    class Meta:
+        managed = True
+        db_table = 'Notification'
+
+
+class Preference(models.Model):
+    referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'Preference'
+
+
+class Referee(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+    LEVEL_CHOICES = [
+        ('0', 'Trainee'),
+        ('1', 'Level 1'),
+        ('2', 'Level 2'),
+        ('3', 'Level 3'),
+        ('4', 'Level 4'),
+    ]
+    referee_id = models.CharField(primary_key=True, max_length=50)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='0')
+    date_of_birth = models.DateField(null=True)
+    age = models.IntegerField()
+    location = models.CharField(max_length=50)
+    zip_code = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=50)
+    experience_years = models.IntegerField()
+    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default='0')
+
+    class Meta:
+        managed = True
+        db_table = 'Referee'
+
+
+class Relative(models.Model):
+    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    club = models.ForeignKey(Club, models.DO_NOTHING, db_column='club_ID')  # Field name made lowercase.
+    relative_name = models.CharField(max_length=50)
+    relationship = models.CharField(max_length=50)
+    age = models.IntegerField()
+
+    class Meta:
+        managed = True
+        db_table = 'Relative'
+
+
+class Venue(models.Model):
+    venue_id = models.CharField(db_column='venue_ID', primary_key=True, max_length=50)  # Field name made lowercase.
+    venue_name = models.CharField(max_length=50)
+    capacity = models.IntegerField()
+    location = models.CharField(max_length=50)
+
+    class Meta:
+        managed = True
+        db_table = 'Venue'
+
+
+class AppointmentManagementAppointment(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    type = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    date = models.DateField()
+    time = models.TimeField()
+    venue = models.CharField(max_length=200)
 
     class Meta:
         managed = False
