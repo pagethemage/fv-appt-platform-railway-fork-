@@ -110,6 +110,7 @@ class Notification(models.Model):
 class Preference(models.Model):
     referee = models.ForeignKey('Referee', models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
     venue = models.ForeignKey('Venue', models.DO_NOTHING, db_column='venue_ID')  # Field name made lowercase.
+    preference_ID = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -151,6 +152,7 @@ class Relative(models.Model):
     referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
     club = models.ForeignKey(Club, models.DO_NOTHING, db_column='club_ID')  # Field name made lowercase.
     relative_name = models.CharField(max_length=50)
+    relative_id = models.AutoField(primary_key=True)
     relationship = models.CharField(max_length=50)
     age = models.IntegerField()
 

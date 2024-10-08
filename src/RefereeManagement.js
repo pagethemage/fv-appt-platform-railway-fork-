@@ -255,9 +255,11 @@ const RefereeManagement = () => {
             // TODO: Implement general availability logic
             console.log("General availability updated:", availabilityData);
         }
+
         validateField();
         setShowAvailabilityModal(false);
         setAvailabilityType(null);
+
     };
 
     const renderAvailabilityForm = () => {
@@ -541,7 +543,7 @@ const RefereeManagement = () => {
                 </aside>
             </main>
             <div ref={availabilityRef}>
-            <Availability availabilities={availabilities} weekDay={weekDay} />
+            <Availability availabilities={availabilities} weekDay={weekDay} getAvailabilityForReferee={getAvailabilityForReferee}/>
             </div>
             {showAvailabilityModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
