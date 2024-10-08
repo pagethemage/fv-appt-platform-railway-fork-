@@ -33,9 +33,13 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
         serializer = AppointmentSerializer(queryset, many = True)
         return Response(serializer.data, status= status.HTTP_200_OK)
+
+    #Retrive a specific appointment (GET /appointments/ {id})
+    def retrieve(self, request, pk=None):
+        appointmet = get_object_or_404(self.queryset, pk=pk)
+        serializer = AppointmentSerializer(appointmet)
+        return Response(serializer.data, status= status.HTTP_200_OK)
     
-
-
     #Retrive a specific appointment (GET /appointments/ {id})
     def retrieve(self, request, pk=None):
         appointmet = get_object_or_404(self.queryset, pk=pk)
@@ -85,12 +89,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()
     serializer_class = AvailabilitySerializer
-
-    #List all availabilities (GET /appointments/)
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = AvailabilitySerializer(queryset, many = True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     
     #Retrieve a specific availability (GET /appointments/{id})
     def retrieve(self, request, pk=None):
@@ -114,6 +112,13 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+        if (request.query_params.get("referee")):
+            queryset = queryset.filter(referee=request.query_params.get("referee"))
+        serializer = AvailabilitySerializer(queryset, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     #Partial update (PATCH /availabilities/{id})
     def partial_update(self, request, pk =None):

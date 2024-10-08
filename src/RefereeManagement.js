@@ -9,6 +9,10 @@ import Venue from "./Venue";  // Import Venue component
 import LoginPage from "./LoginPage";
 import TitleWithBar from "./components/TitleWithBar";
 import TimePicker from "./components/TimePicker";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+import Availability from "./Availability";
 
 const RefereeManagement = () => {
     const [activeTab, setActiveTab] = useState("dashboard");
@@ -17,22 +21,69 @@ const RefereeManagement = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [availableDates, setAvailableDates] = useState([]);
     const [unavailableDates, setUnavailableDates] = useState([]);
+    const [availabilities, setAvailability] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
     const [availabilityType, setAvailabilityType] = useState(null);
+    const availabilityRef = useRef(null);
+    const [refereeProfile, setRefereeProfile] = useState({
+        "referee_id": null,
+        "first_name": null,
+        "last_name": null,
+        "gender": null,
+        "date_of_birth": null,
+        "age": null,
+        "location": null,
+        "zipcode": null,
+        "email": null,
+        "phone_number": null,
+        "experience_years": null,
+        "level": null
+    })
     const [availabilityData, setAvailabilityData] = useState({
         date: null,
         day: null,
         timeType: "entireDay",
-        startTime: "09:00",
-        endTime: "17:00",
+        startTime: null,
+        endTime: null,
         type: "available",
         organizations: "all",
     });
     const dropdownRef = useRef(null);
     const modalRef = useRef(null);
 
+    useEffect(() => {
+        getFirstRefereeAndAvailability();
+    }, []);
+
+    useEffect(() => {
+        getAvailabilityForReferee();
+    }, [refereeProfile]);
+
+    useEffect(() => {
+        availabilityRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, [availabilities]);
+
+    const getAvailabilityForReferee = async () => {
+        const availability = await axios.get(`http://localhost:8000/api/availability/?referee=${refereeProfile.referee_id}`);
+        setAvailability(availability.data);
+        console.log(availability.data)
+    }
+    const getFirstRefereeAndAvailability = async () => {
+        const firstReferee = await axios.get("http://localhost:8000/api/referee/1/");
+        setRefereeProfile(firstReferee.data);
+    }
+
+    const weekDay = {
+        "Mon": "Monday",
+        "Tue": "Tuesday",
+        "Wed": "Wednesday",
+        "Thu": "Thursay",
+        "Fri": "Friday",
+        "Sat": "Saturday",
+        "Sun": "Sunday"
+    }
     const appointments = [
         {
             id: 1,
@@ -121,6 +172,62 @@ const RefereeManagement = () => {
         };
     }, []);
 
+    const validateField = () => {
+        if (!availabilityData.date && !availabilityData.day) {
+            toast.error("Availability date or weekday must not be empty", {
+                autoClose: 5000,
+                pauseOnHover: true,
+                closeOnClick: true,
+                theme: "dark"
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    const handleSubmitAvailability = async () => {
+        if (!validateField()) {
+            return;
+        }
+        const availability = {
+            referee: refereeProfile.referee_id,
+            weekday: availabilityData.day?.slice(0, 3),
+            availableType: availabilityData.type[0].toUpperCase(),
+            start_time: availabilityData.startTime,
+            end_time: availabilityData.endTime,
+            date: availabilityData.date,
+        }
+        if (availability.date || availability.weekday) {
+            const loading = toast.loading("Please wait...");
+            const response = await axios.post("http://localhost:8000/api/availability/", availability);
+            console.log(response);
+            if (response.status == 201) {
+                toast.update(loading, {render: "Submited Successfully", type: "success", isLoading: false, autoClose: 5000, hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "dark"
+                });
+                getAvailabilityForReferee();
+            }
+            else {
+                toast.update(loading, {render: "Something went wrong", type: "error", isLoading: false });
+            }
+        }
+        //reset availabilityData
+        setAvailabilityData({
+            date: null,
+            day: null,
+            timeType: "entireDay",
+            startTime: null,
+            endTime: null,
+            type: "available",
+            organizations: "all",
+        })
+
+    }
+
     const handleUpdateAvailability = () => {
         setShowAvailabilityModal(true);
     };
@@ -132,14 +239,14 @@ const RefereeManagement = () => {
     const handleAvailabilitySubmit = () => {
         if (availabilityType === "specific" && availabilityData.date) {
             const dateString = availabilityData.date;
-
+            
             if (availabilityData.type === "available") {
-                setAvailableDates((prev) => [...prev, dateString]);
+                setAvailableDates([dateString]);
                 setUnavailableDates((prev) =>
                     prev.filter((date) => date !== dateString),
                 );
             } else {
-                setUnavailableDates((prev) => [...prev, dateString]);
+                setUnavailableDates([dateString]);
                 setAvailableDates((prev) =>
                     prev.filter((date) => date !== dateString),
                 );
@@ -148,18 +255,9 @@ const RefereeManagement = () => {
             // TODO: Implement general availability logic
             console.log("General availability updated:", availabilityData);
         }
+        validateField();
         setShowAvailabilityModal(false);
         setAvailabilityType(null);
-        // Reset availabilityData
-        setAvailabilityData({
-            date: null,
-            day: null,
-            timeType: "entireDay",
-            startTime: "09:00",
-            endTime: "17:00",
-            type: "available",
-            organizations: "all",
-        });
     };
 
     const renderAvailabilityForm = () => {
@@ -203,13 +301,13 @@ const RefereeManagement = () => {
                             }
                         >
                             <option value="">Select a day</option>
-                            <option value="monday">Monday</option>
-                            <option value="tuesday">Tuesday</option>
-                            <option value="wednesday">Wednesday</option>
-                            <option value="thursday">Thursday</option>
-                            <option value="friday">Friday</option>
-                            <option value="saturday">Saturday</option>
-                            <option value="sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
                         </select>
                     </div>
                 )}
@@ -373,7 +471,7 @@ const RefereeManagement = () => {
                             className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
-                            Logged in as Kyle DENIS
+                            Logged in as {refereeProfile.first_name + " " + refereeProfile.last_name}
                         </button>
                         {showDropdown && (
                             <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
@@ -417,16 +515,15 @@ const RefereeManagement = () => {
             <main className="container mx-auto mt-6 grid grid-cols-3 gap-6">
                 {/* Main content: Appointments table */}
                 <section className="col-span-2">{renderContent()}</section>
-
                 {/* Sidebar content: Calendar and News */}
                 <aside>
                     <div className="mb-4">
                         <TitleWithBar title="Availability" />
                         <button
-                            onClick={handleUpdateAvailability}
+                            onClick={handleSubmitAvailability}
                             className="bg-fvMiddleHeader hover:underline text-black font-bold py-3 px-4 rounded w-full"
                         >
-                            Update Availability
+                            Submit Availability
                         </button>
                     </div>
 
@@ -441,19 +538,9 @@ const RefereeManagement = () => {
                         isWidget={true}
                         handleUpdateAvailability={handleUpdateAvailability}
                     />
-
-                    {/* News and Messages */}
-                    <div className="mt-6">
-                        <TitleWithBar title="News and Messages" />
-                        <div className="bg-white shadow rounded-lg p-4">
-                            <p className="text-gray-500">
-                                There are no messages to display.
-                            </p>
-                        </div>
-                    </div>
                 </aside>
             </main>
-
+            <Availability availabilities={availabilities} weekDay={weekDay} ref={availabilityRef} />
             {showAvailabilityModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div
@@ -515,6 +602,7 @@ const RefereeManagement = () => {
                     </div>
                 </div>
             )}
+            <ToastContainer />
         </div>
     );
 };
