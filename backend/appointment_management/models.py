@@ -1,3 +1,4 @@
+
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -47,16 +48,24 @@ class Availability(models.Model):
         ("Sat", "Saturday"),
         ("Sun", "Sunday")
     ]
-    referee = models.OneToOneField('Referee', models.DO_NOTHING, primary_key=True)  # The composite primary key (referee_id, Date, start_time) found, that is not supported. The first column is selected.
+    allowed_types = [
+        ('A', "Available"),
+        ('U', "Unavailable")
+    ]
+    referee = models.ForeignKey('Referee', models.DO_NOTHING, unique=False)
+    availableID = models.AutoField(primary_key=True)
+      # The composite primary key (referee_id, Date, start_time) found, that is not supported. The first column is selected.
     date = models.DateField(db_column='Date', null=True)  # Field name made lowercase. Date field represents specific availability: 05/24/2024 5pm - 8pm.
-    start_time = models.TimeField()
-    duration = models.IntegerField(db_column='Duration')  # Field name made lowercase.
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    duration = models.IntegerField(db_column='Duration', null=True)  # Field name made lowercase.
+    availableType = models.CharField(max_length=1, choices=allowed_types, default='A')
     weekday = models.CharField(max_length=3, choices=main_days, null=True) # Weekday field represents general availability: Sunday 5pm - 8pm.
 
     class Meta:
         managed = True
         db_table = 'Availability'
-        unique_together = (('referee', 'date', 'start_time'),)
+
 
 
 class Club(models.Model):

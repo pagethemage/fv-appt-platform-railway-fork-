@@ -71,7 +71,7 @@ const Calendar = ({
                     <span
                         className={`${
                             isToday
-                                ? "w-7 h-7 flex items-center justify-center rounded-full bg-blue-100"
+                                ? "w-7 h-7 p-3 rounded-full bg-blue-100"
                                 : ""
                         }`}
                     >

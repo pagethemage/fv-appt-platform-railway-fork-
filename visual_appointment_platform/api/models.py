@@ -10,7 +10,7 @@ class Referee(models.Model):
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
-        ('0', 'Other'),
+        ('O', 'Other'),
     ]
 
     gender = models.CharField(max_length=1, choices = GENDER_CHOICES)
