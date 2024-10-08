@@ -26,7 +26,7 @@ const Venue = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        fetch("/api/venue/", {
+        fetch("http://127.0.0.1:8000/api/venue/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newVenue),
