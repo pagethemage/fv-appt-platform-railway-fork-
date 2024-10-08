@@ -5,7 +5,8 @@ import Calendar from "./Calendar";
 import Teams from "./Teams";
 import Profile from "./Profile";
 import Settings from "./Settings";
-import Venue from "./Venue";  // Import Venue component
+import Venue from "./Venue"; 
+import Relative from "./Relative"; 
 import LoginPage from "./LoginPage";
 import TitleWithBar from "./components/TitleWithBar";
 import TimePicker from "./components/TimePicker";
@@ -340,6 +341,8 @@ const RefereeManagement = () => {
                 return <Settings />;
             case "venues":  // Add venue tab
                 return <Venue />;
+            case "relatives":
+                return <Relative />;
             default:
                 return null;
         }
@@ -398,6 +401,7 @@ const RefereeManagement = () => {
                         "Venues",   // Add Venues to the navigation
                         "Profile",
                         "Settings",
+                        "Relatives",
                     ].map((item) => (
                         <button
                             key={item}
