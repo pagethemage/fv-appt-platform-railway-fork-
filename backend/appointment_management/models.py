@@ -8,7 +8,6 @@
 from django.db import models
 
 
-
 class Appointment(models.Model):
     appointment_id = models.CharField(primary_key=True, max_length=50)
     referee = models.ForeignKey('Referee', models.DO_NOTHING)
@@ -140,7 +139,7 @@ class Referee(models.Model):
 
 
 class Relative(models.Model):
-    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
+    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID', primary_key=True)  # Field name made lowercase.
     club = models.ForeignKey(Club, models.DO_NOTHING, db_column='club_ID')  # Field name made lowercase.
     relative_name = models.CharField(max_length=50)
     relationship = models.CharField(max_length=50)

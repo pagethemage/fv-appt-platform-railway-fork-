@@ -334,7 +334,6 @@ class PreferenceViewSet(viewsets.ModelViewSet):
 class RefereeViewSet(viewsets.ModelViewSet):
     queryset = Referee.objects.all()
     serializer_class = RefereeSerializer
-    permission_classes = [IsAuthenticated]
     
     #List all the referees (GET /referees/)
     def list(self, request):
@@ -388,6 +387,49 @@ class RelativeViewSet(viewsets.ModelViewSet):
     queryset = Relative.objects.all()
     serializer_class = RelativeSerializer
 
+    #List all relatives (GET /relatives/)
+    def list(self, request):
+        querryset = self.get_queryset()
+        serializer = RelativeSerializer(querryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    #Retrieve a specific relative (GET /relatives/{id})
+    def retrieve(self, request, pk = None):
+        relative = get_object_or_404(self.queryset, pk=pk)
+        serializer = RelativeSerializer(relative)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    #Create new relative (POST /relatives/)
+    def create(self, request):
+        serializer = RelativeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    #Updata an existing relative (PUT /relatives/{id})
+    def update(self, request, pk=None):
+        relative = get_object_or_404(self.queryset, pk=pk)
+        serializer = RelativeSerializer(relative, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    #Partial update (PATCH /relatives/{id})
+    def partial_update(self, request, pk=None):
+        relative = get_object_or_404(self.queryset, pk=pk)
+        serializer = RelativeSerializer(relative, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    #Delete a relative (DELETE /relatives/{id})
+    def destroy(self, request, pk=None):
+        relative = get_object_or_404(self.queryset, pk=pk)
+        relative.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.all()
     serializer_class = VenueSerializer
