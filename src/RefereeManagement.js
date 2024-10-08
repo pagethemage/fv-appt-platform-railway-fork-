@@ -180,10 +180,10 @@ const RefereeManagement = () => {
                 closeOnClick: true,
                 theme: "dark"
             });
-            return true;
+            return false;
         }
         else {
-            return false;
+            return true;
         }
     }
 
@@ -540,7 +540,9 @@ const RefereeManagement = () => {
                     />
                 </aside>
             </main>
-            <Availability availabilities={availabilities} weekDay={weekDay} ref={availabilityRef} />
+            <div ref={availabilityRef}>
+            <Availability availabilities={availabilities} weekDay={weekDay} />
+            </div>
             {showAvailabilityModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div
