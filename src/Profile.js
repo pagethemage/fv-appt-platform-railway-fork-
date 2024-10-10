@@ -116,4 +116,4 @@ const Profile = () => {
         </>
     );
 };
-export default Referee;
+export default Profile;

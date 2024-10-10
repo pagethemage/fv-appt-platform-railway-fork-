@@ -14,17 +14,50 @@ const Relative = () => {
     return (
         <div>
             <h2 className="text-xl font-semibold mb-4">Manage Relatives</h2>
-
             {/* Display a list of relative */}
-            <ul>
-                {relatives.map((relative) => (
-                    <li key={relative.referee}>
-                        (Referee:{relative.referee}) - (Club:{relative.club})
-                        (Relative Name:{relative.relative_name}) - (Relationship:{relative.relationship})
-                        (Age:{relative.age})
-                    </li>
-                ))}
-            </ul>
+
+            <table className="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Relative referee
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Club Name
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Relative name
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Relationship
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Age
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {relatives.map((relative) => (
+                        <tr key={relative.referee}>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {relative.referee}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {relative.club}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {relative.relative_name}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {relative.relationship}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {relative.age}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

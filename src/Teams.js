@@ -23,15 +23,49 @@ const Teams = () => {
             <h2 className="text-xl font-semibold mb-4">Manage Clubs</h2>
 
             {/* Display a list of clubs */}
-            <ul>
-                {clubs.map((club) => (
-                    <li key={club.club_id}>
-                        (Club ID:{club.club_id}) - (CLub Name:{club.club_name})
-                        (Home Venue:{club.home_venue}) - (Contact Name:{club.contact_name})
-                        (Contact Phone Number:{club.contact_phone_number})
-                    </li>
-                ))}
-            </ul>
+
+            <table className="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Club ID 
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Club Name
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Home Venue
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Contact Name
+                        </th>
+                        <th className="px-3 py-3 border-b-2 border-gray-400 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Contact Phone Number
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clubs.map((club) => (
+                        <tr key={club.club_id}>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {club.club_id}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {club.club_name}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {club.home_venue}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {club.contact_name}
+                            </td>
+                            <td className="px-3 py-3 whitespace-no-wrap border-b border-gray-200 text-left">
+                                {club.contact_phone_number}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

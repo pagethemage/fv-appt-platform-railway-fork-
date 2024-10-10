@@ -149,7 +149,7 @@ class Referee(models.Model):
 
 
 class Relative(models.Model):
-    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID', primary_key=True)  # Field name made lowercase.
+    referee = models.ForeignKey(Referee, models.DO_NOTHING, db_column='referee_ID')  # Field name made lowercase.
     club = models.ForeignKey(Club, models.DO_NOTHING, db_column='club_ID')  # Field name made lowercase.
     relative_name = models.CharField(max_length=50)
     relative_id = models.AutoField(primary_key=True)
